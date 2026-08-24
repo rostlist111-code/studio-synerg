@@ -1,0 +1,119 @@
+from datetime import date
+
+# Шаблоны цифр в стиле семисегментного индикатора (высота 5 строк)
+DIGITS = {
+    '0': [
+        " *** ",
+        "*   *",
+        "*   *",
+        "*   *",
+        " *** "
+    ],
+    '1': [
+        "  *  ",
+        "  *  ",
+        "  *  ",
+        "  *  ",
+        "  *  "
+    ],
+    '2': [
+        " *** ",
+        "    *",
+        " *** ",
+        "*    ",
+        " *** "
+    ],
+    '3': [
+        " *** ",
+        "    *",
+        " *** ",
+        "    *",
+        " *** "
+    ],
+    '4': [
+        "*   *",
+        "*   *",
+        " *** ",
+        "    *",
+        "    *"
+    ],
+    '5': [
+        " *** ",
+        "*    ",
+        " *** ",
+        "    *",
+        " *** "
+    ],
+    '6': [
+        " *** ",
+        "*    ",
+        " *** ",
+        "*   *",
+        " *** "
+    ],
+    '7': [
+        " *** ",
+        "    *",
+        "    *",
+        "    *",
+        "    *"
+    ],
+    '8': [
+        " *** ",
+        "*   *",
+        " *** ",
+        "*   *",
+        " *** "
+    ],
+    '9': [
+        " *** ",
+        "*   *",
+        " *** ",
+        "    *",
+        " *** "
+    ]
+}
+
+def get_int(prompt: str) -> int:
+    while True:
+        value = input(prompt)
+        if value.isdigit():
+            return int(value)
+        print("Пожалуйста, введите число.")
+
+def print_digit_row(digits_str: str, row_index: int):
+    """Печатает одну строку для всех цифр в строке digits_str"""
+    line = ""
+    for ch in digits_str:
+        line += DIGITS[ch][row_index] + " "  # пробел между цифрами
+    print(line)
+
+def print_date_as_stars(day: int, month: int, year: int):
+    # Форматируем как дд мм гггг с ведущими нулями
+    day_str = f"{day:02d}"
+    month_str = f"{month:02d}"
+    year_str = str(year)  # год всегда 4 цифры
+
+    date_str = day_str + month_str + year_str
+
+    # Печатаем по строкам (всего 5 строк на цифру)
+    for row in range(5):
+        print_digit_row(date_str, row)
+
+def main():
+    day = get_int("Введите день рождения: ")
+    month = get_int("Введите месяц рождения: ")
+    year = get_int("Введите год рождения: ")
+
+    try:
+        # Проверка корректности даты
+        date(year, month, day)
+    except ValueError:
+        print("Введена некорректная дата.")
+        return
+
+    print("\nДата рождения (электронное табло):")
+    print_date_as_stars(day, month, year)
+
+if __name__ == "__main__":
+    main()
