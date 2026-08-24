@@ -1,0 +1,12 @@
+def get_int(prompt):
+    while True:
+        value = input(prompt)
+        if value.isdigit():
+            return int(value)
+        print("Пожалуйста, введите число.")
+
+day = get_int("Введите день рождения: ")
+month = get_int("Введите месяц рождения: ")
+year = get_int("Введите год рождения: ")
+
+print(f"Ваша дата рождения: {day:02d}.{month:02d}.{year:04d}")
