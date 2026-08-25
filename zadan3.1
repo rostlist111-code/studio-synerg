@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Слайдер изображений</title>
+  <style>
+    :root {
+      --bg: #1a1d2e;
+      --panel: #ffffff;
+      --accent: #6c5ce7;
+      --accent-hover: #5a4bd1;
+      --text: #2d3436;
+      --border: #e1e8ed;
+      --shadow: 0 12px 32px rgba(108, 92, 231, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, var(--bg) 0%, #2d3561 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .slider {
+      background: var(--panel);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+      width: 100%;
+      max-width: 700px;
+    }
+
+    .slider__title {
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 22px;
+      letter-spacing: 0.5px;
+    }
+
+    .slider__viewport {
+      position: relative;
+      width: 100%;
+      height: 400px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 3px solid var(--border);
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.06);
+      background: #f7f8fa;
+    }
+
+    .slider__image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: opacity 0.35s ease;
+    }
+
+    /* Плавная смена */
+    .slider__image.fade-out {
+      opacity: 0;
+    }
+
+    .slider__counter {
+      position: absolute;
+      bottom: 12px;
+      right: 14px;
+      background: rgba(45, 52, 54, 0.75);
+      color: #fff;
+      font-size: 0.85rem;
+      padding: 5px 14px;
+      border-radius: 20px;
+      backdrop-filter: blur(4px);
+    }
+
+    .slider__indicators {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .slider__dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #dfe6e9;
+      border: none;
+      cursor: pointer;
+      transition: background 0.25s, transform 0.25s;
+    }
+
+    .slider__dot.active {
+      background: var(--accent);
+      transform: scale(1.25);
+    }
+
+    .slider__dot:hover {
+      background: var(--accent-hover);
+    }
+
+    .slider__controls {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .slider__btn {
+      flex: 1;
+      padding: 13px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      background: var(--accent);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.25s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .slider__btn:hover {
+      background: var(--accent-hover);
+    }
+
+    .slider__btn:active {
+      transform: scale(0.97);
+    }
+
+    .slider__btn:focus-visible {
+      outline: 3px solid #a29bfe;
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 520px) {
+      .slider { padding: 18px; }
+      .slider__viewport { height: 260px; }
+      .slider__btn { padding: 10px 16px; font-size: 0.9rem; }
+      .slider__title { font-size: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="slider">
+    <h2 class="slider__title">Галерея изображений</h2>
+
+    <div class="slider__viewport">
+      <img
+        class="slider__image"
+        id="slideImage"
+        src="https://picsum.photos/id/1018/700/400"
+        alt="Слайд 1"
+      />
+      <div class="slider__counter" id="slideCounter">1 / 5</div>
+    </div>
+
+    <div class="slider__indicators" id="indicators"></div>
+
+    <div class="slider__controls">
+      <button class="slider__btn" id="prevBtn" type="button">
+        <span>← Назад</span>
+      </button>
+      <button class="slider__btn" id="nextBtn" type="button">
+        <span>Вперёд →</span>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // --- Данные слайдов ---
+    const images = [
+      { src: 'https://img.magnific.com/free-photo/digital-art-beautiful-mountains_23-2151123537.jpg?semt=ais_hybrid&w=740&q=80', alt: 'Горный пейзаж' },
+      { src: 'https://avatars.mds.yandex.net/get-shedevrum/12164887/img_b19f220e780311ef86a4e64959f934a7/orig', alt: 'Река в лесу' },
+      { src: 'https://img.magnific.com/free-photo/beautiful-starry-sky-town_23-2151642640.jpg?semt=ais_hybrid&w=740&q=80', alt: 'Город ночью' },
+      { src: 'https://avatars.mds.yandex.net/i?id=6dbdc83e481d6bfbae63c2b7716c2341_l-12646988-images-thumbs&n=13', alt: 'Щенок' },
+      { src: 'https://img.magnific.com/free-photo/cute-kitten-playing-with-toy-looking-camera-with-curiosity-generated-by-artificial-intelligence_188544-241591.jpg?semt=ais_hybrid&w=740', alt: 'Котёнок' }
+    ];
+
+    // --- DOM-элементы ---
+    const slideImage = document.getElementById('slideImage');
+    const slideCounter = document.getElementById('slideCounter');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const indicatorsContainer = document.getElementById('indicators');
+
+    let currentIndex = 0;
+
+    // --- Создание индикаторов-точек ---
+    images.forEach((_, index) => {
+      const dot = document.createElement('button');
+      dot.className = 'slider__dot';
+      dot.type = 'button';
+      dot.setAttribute('aria-label', `Слайд ${index + 1}`);
+      if (index === 0) dot.classList.add('active');
+      dot.addEventListener('click', () => showSlide(index));
+      indicatorsContainer.appendChild(dot);
+    });
+
+    const dots = document.querySelectorAll('.slider__dot');
+
+    // --- Обновление UI ---
+    function updateUI() {
+      slideImage.src = images[currentIndex].src;
+      slideImage.alt = images[currentIndex].alt;
+      slideCounter.textContent = `${currentIndex + 1} / ${images.length}`;
+      dots.forEach((dot, idx) => {
+        dot.classList.toggle('active', idx === currentIndex);
+      });
+    }
+
+    // --- Плавная смена с fade-эффектом ---
+    function showSlide(index) {
+      slideImage.classList.add('fade-out');
+      setTimeout(() => {
+        currentIndex = index;
+        updateUI();
+        slideImage.classList.remove('fade-out');
+      }, 180);
+    }
+
+    // --- Зацикленная навигация ---
+    function nextSlide() {
+      // После последнего → снова первый
+      const nextIndex = (currentIndex + 1) % images.length;
+      showSlide(nextIndex);
+    }
+
+    function prevSlide() {
+      // Перед первым → последний
+      const prevIndex = (currentIndex - 1 + images.length) % images.length;
+      showSlide(prevIndex);
+    }
+
+    // --- Слушатели событий ---
+    nextBtn.addEventListener('click', nextSlide);
+    prevBtn.addEventListener('click', prevSlide);
+
+    // Навигация с клавиатуры
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') nextSlide();
+      if (e.key === 'ArrowLeft') prevSlide();
+    });
+
+    // --- Инициализация ---
+    updateUI();
+  </script>
+</body>
+</html>
